@@ -45,9 +45,9 @@ local function setup(_, options)
 
     local current_separator_style = config.separator_styles
 
-    -- function Header:count()
-    --     return ui.Line({})
-    -- end
+    function Header:count()
+        return ui.Line({})
+    end
 
     function Status:mode()
         local mode = tostring(self._tab.mode):upper()
@@ -83,19 +83,19 @@ local function setup(_, options)
         return string.sub(str, start_byte, end_byte)
     end
 
-    function Status:truncate_name(filename, max_length)
-        local base_name, extension = filename:match("^(.+)(%.[^%.]+)$")
-        base_name = base_name or filename
-        extension = extension or ""
-
-        if utf8.len(base_name) > max_length then
-            base_name = self:utf8_sub(base_name, 1, config.filename_truncate_length)
-                .. config.filename_truncate_separator
-                .. self:utf8_sub(base_name, -config.filename_truncate_length)
-        end
-
-        return base_name .. extension
-    end
+    -- function Status:truncate_name(filename, max_length)
+    --     local base_name, extension = filename:match("^(.+)(%.[^%.]+)$")
+    --     base_name = base_name or filename
+    --     extension = extension or ""
+    --
+    --     if utf8.len(base_name) > max_length then
+    --         base_name = self:utf8_sub(base_name, 1, config.filename_truncate_length)
+    --             .. config.filename_truncate_separator
+    --             .. self:utf8_sub(base_name, -config.filename_truncate_length)
+    --     end
+    --
+    --     return base_name .. extension
+    -- end
 
     function Status:name()
         local h = self._current.hovered
