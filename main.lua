@@ -157,6 +157,9 @@ local function setup(_, options)
         end
 
         local cha = hovered.cha
+        if not cha then
+            return ""
+        end
         -- local time = (cha.mtime or 0) // 1
         local time = math.floor((cha.mtime or 0) / 1)
 
