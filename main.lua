@@ -45,9 +45,9 @@ local function setup(_, options)
 
     local current_separator_style = config.separator_styles
 
-    function Header:count()
-        return ui.Line({})
-    end
+    -- function Header:count()
+    --     return ui.Line({})
+    -- end
 
     function Status:mode()
         local mode = tostring(self._tab.mode):upper()
@@ -97,27 +97,27 @@ local function setup(_, options)
         return base_name .. extension
     end
 
-    -- function Status:name()
-    --     local h = self._current.hovered
-    --     local style = self:style()
-    --     if not h then
-    --         return ui.Line({
-    --             ui.Span(current_separator_style.separator_close .. " ")
-    --                 :fg(config.secondary_color or th.which.separator_style:fg()),
-    --             ui.Span("Empty dir")
-    --                 :fg(config.color or style.main:bg()),
-    --         })
-    --     end
-    --
-    --     local truncated_name = self:truncate_name(h.name, config.filename_max_length)
-    --
-    --     return ui.Line({
-    --         ui.Span(current_separator_style.separator_close .. " ")
-    --             :fg(config.secondary_color or th.which.separator_style:fg()),
-    --         ui.Span(truncated_name)
-    --             :fg(config.color or style.main:bg()),
-    --     })
-    -- end
+    function Status:name()
+        local h = self._current.hovered
+        local style = self:style()
+        if not h then
+            return ui.Line({
+                ui.Span(current_separator_style.separator_close .. " ")
+                    :fg(config.secondary_color or th.which.separator_style:fg()),
+                ui.Span("Empty dir")
+                    :fg(config.color or style.main:bg()),
+            })
+        end
+
+        local truncated_name = self:truncate_name(h.name, config.filename_max_length)
+
+        return ui.Line({
+            ui.Span(current_separator_style.separator_close .. " ")
+                :fg(config.secondary_color or th.which.separator_style:fg()),
+            ui.Span(truncated_name)
+                :fg(config.color or style.main:bg()),
+        })
+    end
 
     function Status:files()
         local files_yanked = #cx.yanked
