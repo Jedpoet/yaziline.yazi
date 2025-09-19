@@ -107,7 +107,8 @@ local function setup(_, options)
         if not h then
             return ui.Line({
                 ui.Span(current_separator_style.separator_close .. " ")
-                    :fg(config.secondary_color or (is_windows and th.which.separator_style or th.which.separator_style:fg())),
+                    :fg(config.secondary_color or
+                    (is_windows and th.which.separator_style or th.which.separator_style:fg())),
                 ui.Span("Empty dir")
                     :fg(config.color or style.main:bg()),
             })
@@ -208,8 +209,9 @@ local function setup(_, options)
         })
     end
 
-    Status:children_add(Status.files, 4000, Status.LEFT)
-    Status:children_add(Status.modified, 0, Status.RIGHT)
+    -- Status:children_add(Status.files, 4000, Status.LEFT)
+    -- Status:children_add(Status.modified, 0, Status.RIGHT)
 end
 
 return { setup = setup }
+
