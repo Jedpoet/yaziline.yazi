@@ -1,6 +1,7 @@
 ---@diagnostic disable: undefined-global
 
 local function setup(_, options)
+    local is_windows = package.config:sub(1, 1) == '\\'
     options = options or {}
 
     local default_separators = {
@@ -30,16 +31,16 @@ local function setup(_, options)
         color = options.color or nil,
         secondary_color = options.secondary_color or nil,
         default_files_color = options.default_files_color
-            or th.which.separator_style:fg()
+            or (is_windows and th.which.separator_style or th.which.separator_style:fg())
             or "darkgray",
         selected_files_color = options.selected_files_color
-            or th.mgr.count_selected:bg()
+            or (is_windows and th.mgr.count_selected or th.mgr.count_selected:bg())
             or "white",
-        yanked_files_color = options.selected_files_color
-            or th.mgr.count_copied:bg()
+        yanked_files_color = options.yanked_files_color
+            or (is_windows and th.mgr.count_copied or th.mgr.count_copied:bg())
             or "green",
         cut_files_color = options.cut_files_color
-            or th.mgr.count_cut:bg()
+            or (is_windows and th.mgr.count_cut or th.mgr.count_cut:bg())
             or "red",
     }
 
@@ -57,19 +58,22 @@ local function setup(_, options)
             ui.Span(current_separator_style.separator_head)
                 :fg(config.color or style.main:bg()),
             ui.Span(" " .. mode .. " ")
-                :fg(th.which.mask:bg())
+                :fg(is_windows and th.which.mask or th.which.mask:bg())
                 :bg(config.color or style.main:bg()),
         })
     end
 
     function Status:size()
         local h = self._current.hovered
-        local size = h and (h:size() or h.cha.len) or 0
+        local size = 0
+        if h then
+            size = h:size() or (h.cha and h.cha.len) or 0
+        end
 
         local style = self:style()
         return ui.Span(current_separator_style.separator_close .. " " .. ya.readable_size(size) .. " ")
             :fg(config.color or style.main:bg())
-            :bg(config.secondary_color or th.which.separator_style:fg())
+            :bg(config.secondary_color or (is_windows and th.which.separator_style or th.which.separator_style:fg()))
     end
 
     function Status:utf8_sub(str, start_char, end_char)
@@ -103,7 +107,7 @@ local function setup(_, options)
         if not h then
             return ui.Line({
                 ui.Span(current_separator_style.separator_close .. " ")
-                    :fg(config.secondary_color or th.which.separator_style:fg()),
+                    :fg(config.secondary_color or (is_windows and th.which.separator_style or th.which.separator_style:fg())),
                 ui.Span("Empty dir")
                     :fg(config.color or style.main:bg()),
             })
@@ -113,7 +117,7 @@ local function setup(_, options)
 
         return ui.Line({
             ui.Span(current_separator_style.separator_close .. " ")
-                :fg(config.secondary_color or th.which.separator_style:fg()),
+                :fg(config.secondary_color or (is_windows and th.which.separator_style or th.which.separator_style:fg())),
             ui.Span(truncated_name)
                 :fg(config.color or style.main:bg()),
         })
@@ -141,7 +145,7 @@ local function setup(_, options)
 
         return ui.Line({
             ui.Span(" " .. current_separator_style.separator_close_thin .. " ")
-                :fg(th.which.separator_style:fg()),
+                :fg(is_windows and th.which.separator_style or th.which.separator_style:fg()),
             ui.Span(config.select_symbol .. " " .. files_selected .. " ")
                 :fg(selected_fg),
             ui.Span(yanked_text .. "  ")
@@ -152,19 +156,14 @@ local function setup(_, options)
     function Status:modified()
         local hovered = cx.active.current.hovered
 
-        if not hovered then
+        if not hovered or not hovered.cha then
             return ""
         end
 
-        local cha = hovered.cha
-        if not cha then
-            return ""
-        end
-        -- local time = (cha.mtime or 0) // 1
-        local time = math.floor((cha.mtime or 0) / 1)
+        local time = math.floor((hovered.cha.mtime or 0) / 1)
 
         return ui.Span(os.date("%Y-%m-%d %H:%M", time) .. " " .. current_separator_style.separator_open_thin .. " ")
-            :fg(th.which.separator_style:fg())
+            :fg(is_windows and th.which.separator_style or th.which.separator_style:fg())
     end
 
     function Status:percent()
@@ -186,13 +185,13 @@ local function setup(_, options)
         local style = self:style()
         return ui.Line({
             ui.Span(" " .. current_separator_style.separator_open)
-                :fg(config.secondary_color or th.which.separator_style:fg()),
+                :fg(config.secondary_color or (is_windows and th.which.separator_style or th.which.separator_style:fg())),
             ui.Span(percent)
                 :fg(config.color or style.main:bg())
-                :bg(config.secondary_color or th.which.separator_style:fg()),
+                :bg(config.secondary_color or (is_windows and th.which.separator_style or th.which.separator_style:fg())),
             ui.Span(current_separator_style.separator_open)
                 :fg(config.color or style.main:bg())
-                :bg(config.secondary_color or th.which.separator_style:fg()),
+                :bg(config.secondary_color or (is_windows and th.which.separator_style or th.which.separator_style:fg())),
         })
     end
 
@@ -203,7 +202,7 @@ local function setup(_, options)
         local style = self:style()
         return ui.Line({
             ui.Span(string.format(" %2d/%-2d ", math.min(cursor + 1, length), length))
-                :fg(th.which.mask:bg())
+                :fg(is_windows and th.which.mask or th.which.mask:bg())
                 :bg(config.color or style.main:bg()),
             ui.Span(current_separator_style.separator_tail):fg(config.color or style.main:bg()),
         })
