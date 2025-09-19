@@ -97,57 +97,57 @@ local function setup(_, options)
         return base_name .. extension
     end
 
-    function Status:name()
-        local h = self._current.hovered
-        local style = self:style()
-        if not h then
-            return ui.Line({
-                ui.Span(current_separator_style.separator_close .. " ")
-                    :fg(config.secondary_color or th.which.separator_style:fg()),
-                ui.Span("Empty dir")
-                    :fg(config.color or style.main:bg()),
-            })
-        end
-
-        local truncated_name = self:truncate_name(h.name, config.filename_max_length)
-
-        return ui.Line({
-            ui.Span(current_separator_style.separator_close .. " ")
-                :fg(config.secondary_color or th.which.separator_style:fg()),
-            ui.Span(truncated_name)
-                :fg(config.color or style.main:bg()),
-        })
-    end
-
-    -- function Status:files()
-    --     local files_yanked = #cx.yanked
-    --     local files_selected = #cx.active.selected
-    --     local files_cut = cx.yanked.is_cut
+    -- function Status:name()
+    --     local h = self._current.hovered
+    --     local style = self:style()
+    --     if not h then
+    --         return ui.Line({
+    --             ui.Span(current_separator_style.separator_close .. " ")
+    --                 :fg(config.secondary_color or th.which.separator_style:fg()),
+    --             ui.Span("Empty dir")
+    --                 :fg(config.color or style.main:bg()),
+    --         })
+    --     end
     --
-    --     local selected_fg = files_selected > 0
-    --         and config.selected_files_color
-    --         or config.default_files_color
-    --     local yanked_fg = files_yanked > 0
-    --         and
-    --         (files_cut
-    --             and config.cut_files_color
-    --             or config.yanked_files_color
-    --         )
-    --         or config.default_files_color
-    --
-    --     local yanked_text = files_yanked > 0
-    --         and config.yank_symbol .. " " .. files_yanked
-    --         or config.yank_symbol .. " 0"
+    --     local truncated_name = self:truncate_name(h.name, config.filename_max_length)
     --
     --     return ui.Line({
-    --         ui.Span(" " .. current_separator_style.separator_close_thin .. " ")
-    --             :fg(th.which.separator_style:fg()),
-    --         ui.Span(config.select_symbol .. " " .. files_selected .. " ")
-    --             :fg(selected_fg),
-    --         ui.Span(yanked_text .. "  ")
-    --             :fg(yanked_fg),
+    --         ui.Span(current_separator_style.separator_close .. " ")
+    --             :fg(config.secondary_color or th.which.separator_style:fg()),
+    --         ui.Span(truncated_name)
+    --             :fg(config.color or style.main:bg()),
     --     })
     -- end
+
+    function Status:files()
+        local files_yanked = #cx.yanked
+        local files_selected = #cx.active.selected
+        local files_cut = cx.yanked.is_cut
+
+        local selected_fg = files_selected > 0
+            and config.selected_files_color
+            or config.default_files_color
+        local yanked_fg = files_yanked > 0
+            and
+            (files_cut
+                and config.cut_files_color
+                or config.yanked_files_color
+            )
+            or config.default_files_color
+
+        local yanked_text = files_yanked > 0
+            and config.yank_symbol .. " " .. files_yanked
+            or config.yank_symbol .. " 0"
+
+        return ui.Line({
+            ui.Span(" " .. current_separator_style.separator_close_thin .. " ")
+                :fg(th.which.separator_style:fg()),
+            ui.Span(config.select_symbol .. " " .. files_selected .. " ")
+                :fg(selected_fg),
+            ui.Span(yanked_text .. "  ")
+                :fg(yanked_fg),
+        })
+    end
 
     function Status:modified()
         local hovered = cx.active.current.hovered
